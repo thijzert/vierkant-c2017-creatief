@@ -1,0 +1,136 @@
+% Template voor een kampprogramma van de
+% Stichting Vierkant voor Wiskunde. Copyright 2000-2005,2011-2012:
+% M.P. Alberts, J.C.C. Langeveld, M. Hendriks, W.J. Palenstijn.
+% Meest recente update: 1-6-2012
+
+% De 'begeleider' optie produceert een begeleidersversie.
+% De 'deelnemer' optie produceert een deelnemersversie (zonder antwoorden).
+% Zonder 'begeleider' en 'deelnemer' wordt een voorlopige versie gemaakt,
+%  met antwoorden, en met de huidige datum aangegeven.
+
+% Er is ook een 'kampA'-optie die verschillende dingen doet. Zie README.txt .
+
+%\documentclass[begeleider]{kampprogramma}
+%\documentclass[deelnemer]{kampprogramma}
+%\documentclass[deelnemer,kampA]{kampprogramma}
+\documentclass{kampprogramma}
+
+% ------- Voer hier de titel in
+\titel{Template}
+% -------
+
+% ------- Voer hier de auteurs in
+\auteurs{
+Maurice Alberts\\
+Maxim Hendriks\\
+Willem Jan Palenstijn
+}
+% -------
+
+% ------- Hier de naam van het (.eps) bestand met de kaftillustratie
+% Je kan dit commando ook weglaten als je nog geen plaatje hebt.
+\illustratie{vierkantlogo}
+% -------
+
+% ------- Hier het kamp waarvoor het programma is. (A/B/C + jaar)
+\kamp{Zomerkamp C 2012}
+% -------
+
+
+\begin{document}
+
+\voorpagina
+
+\voorwoord
+% ------- Schrijf hier een voorwoord
+Hier het voorwoord van het kampprogramma
+% -------
+
+% ------- Legenda
+%
+% In de legenda worden symbolen voor opgaven uitgelegd.
+% Alleen de daadwerkelijk in het programma gebruikte symbolen worden uitgelegd.
+%
+% De symbolen hebben de volgende betekenis:
+% \ster : moeilijke opgave
+% \vinger : deze opgave heeft een hint
+% \schaar : dit is een praktische opdracht
+% \gr : je mag/moet een grafische rekenmachine gebruiken voor deze opgave
+% \discussie : dit is een discussie-opgave
+%
+% Zie het stukje 'Opgave' hieronder over hoe je de symbolen bij een opgave zet
+
+\legenda
+
+
+\inhoudsopgave
+
+% ------- Hier begint het eigenlijke programma
+
+\chapter{Het eerste hoofdstuk}
+Hier de hoofdtekst van het kampprogramma. In het programma zullen opgaven
+staan. Hieronder volgen uitleg en een paar voorbeelden.
+
+%-------- Opgave
+% Achter begin{opgave} kun je tussen vierkante haken [] symbolen
+% uit de legenda toevoegen. In de eerste voorbeeldopgave worden
+% alle symbolen meegegeven.
+%
+% Tussen dezelfde vierkante haken [] kun je met een getal het aantal
+% regels opgeven dat na de opgave als antwoordruimte wordt
+% geboden. Zie de tweede voorbeeldopgave.
+%
+% Wil je zowel legenda-symbolen als antwoordregels toevoegen, dan zet
+% je binnen de vierkante haken [] tussen de symbolen en het getal een komma.
+% Zie de derde voorbeeldopgave.
+% --------
+
+\begin{opgave}[\ster\vinger\schaar\gr]
+Vul deze tekst aan tot een volledig kamprogramma
+\begin{hint}
+Dit is meer werk dan je zou denken!
+\end{hint}
+\begin{antwoord}
+Geen antwoord voor deze opgave helaas\ldots
+\end{antwoord}
+\end{opgave}
+
+Dit is wel een mooie plek voor een plaatje om wat ruimte te vullen:
+
+\begin{center}
+\includegraphics[width=8cm]{vierkantlogo}
+\end{center}
+
+\begin{opgave}[\ster]
+Bewijs dat $a^3 + b^3 = c^3$ geen oplossingen heeft voor gehele $a$,
+$b$ en $c$ ongelijk aan nul.
+\begin{antwoord}
+Dit is een direct gevolg van de laatste stelling van Fermat.
+\end{antwoord}
+\end{opgave}
+
+\begin{opgave}
+Het is ook mogelijk om een opgave in subopgaven te verdelen.
+Antwoorden en hints kan je zowel in de subopgaven als in de hoofdopgave
+zetten. Deze introductie is optioneel.
+\begin{subopgave}
+Dit is de eerste subopgave.
+\begin{antwoord}
+Geen antwoord nodig.
+\end{antwoord}
+\end{subopgave}
+\begin{subopgave}[\schaar]
+Er kunnen ook symbolen bij individuele subopgaven staan.
+\end{subopgave}
+\end{opgave}
+
+\chapter{Het echte werk}
+
+This chapter intentionally left blank.
+
+
+% ------- Hier eindigt het eigenlijke programma
+
+\hintsantwoorden
+
+\end{document}

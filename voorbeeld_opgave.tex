@@ -1,0 +1,43 @@
+% Voorbeeld van gebruik van opgave.sty zonder een .cls-file van Vierkant
+% Stichting Vierkant voor Wiskunde. Copyright 2000-2003:
+% M.P. Alberts, J.C.C. Langeveld, M. Hendriks, W.J. Palenstijn.
+% Meest recente update: 7-03-2003
+
+\documentclass[12pt]{article}
+\usepackage{a4wide}
+
+% Er is ook een 'geenantwoorden' optie, die de antwoorden weglaat
+% (voor bijvoorbeeld de uiteindelijke versie)
+% \usepackage[geenantwoorden]{opgave}
+\usepackage{opgave} % gebruik het Vierkant 'opgave' package
+
+\starthints
+\startantwoorden
+
+\begin{document}
+
+\section{Opgaven}
+
+\begin{opgave}[5]
+een opgave
+\begin{hint}
+een hint
+\end{hint}
+\begin{antwoord}
+een antwoord
+\end{antwoord}
+\end{opgave}
+
+\begin{opgave}[\schaar,3](Naam)
+nog een opgave!
+\begin{hint}
+hint nummer twee
+\end{hint}
+\begin{antwoord}
+en ook nog een antwoord\ldots
+\end{antwoord}
+\end{opgave}
+
+\hintsantwoorden
+
+\end{document}

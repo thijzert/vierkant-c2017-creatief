@@ -1,0 +1,414 @@
+% Opgave environment (en gerelateerde commandos) voor Vierkant voor Wiskunde
+% Copyright 2000-2012: M.P. Alberts, M. Hendriks, G. van de Heuvel,
+%                      O.P. Kind, J.C.C. Langeveld, W.J. Palenstijn.
+% Voor commentaar of vragen: latex@vierkantvoorwiskunde.nl
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{opgave}[2012/06/01 Vierkant voor Wiskunde opgave environment]
+
+\RequirePackage{answers}
+\RequirePackage{pifont} % Voor de symbolen in de kantlijn.
+\RequirePackage{enumitem} % Voor ingesprongen opgaven.
+
+\newif{\if@antwoorden}
+\@antwoordentrue
+
+\newif{\if@antwoordengebruikt}
+\@antwoordengebruiktfalse
+\newif{\if@hintsgebruikt}
+\@hintsgebruiktfalse
+
+\DeclareOption{geenantwoorden}{\@antwoordenfalse}
+
+% Optie om de antwoordruimte te veranderen van regels in een vlak (met rand);
+% handig voor als de antwoorden getekend moeten worden.
+\newif\if@opgaveantwoordlijnen
+\@opgaveantwoordlijnentrue
+\DeclareOption{geenlijnen}{\@opgaveantwoordlijnenfalse}
+
+\newif\if@opgaveninspringen
+\@opgaveninspringenfalse
+\DeclareOption{ingesprongen}{\@opgaveninspringentrue}
+
+% Optie om geen hoofdstuknummers in de opgavelabels te zetten.
+\newif\if@plattenummering
+\@plattenummeringfalse
+\DeclareOption{plattenummering}{\@plattenummeringtrue}
+
+
+\ProcessOptions
+
+% Als er geen hoofdstukken zijn, kan het hoofdstuknummer niet in het label.
+\@ifundefined{c@chapter}{\@plattenummeringtrue}
+
+
+% een eenvoudige loop voor gebruik in lijnregels
+\newcount\loopcount
+\newcommand{\@loop}[2]{%
+\loopcount=0%
+\loop\ifnum\loopcount<#1 \advance\loopcount by1\relax#2\repeat%
+}
+
+% nieuw commando om een aantal 'lijnregels' te zetten
+\newlength{\lijnafstand}
+\setlength{\lijnafstand}{1.3\baselineskip}
+\newcommand{\lijnregels}[1]{%
+\vbox{\@loop{#1}{\hrule height\lijnafstand width0pt\hrule height.4pt width\linewidth\relax}}%
+}
+% Nieuw commando om een aantal 'lijnregels' als een vlak te zetten
+\newcommand{\antwoordvlak}[1]{%
+%\addtolength{\linewidth}{-1.0\leftmargin}%
+\begin{tabular}{|p{\linewidth}|}\hline\vspace{#1\lijnafstand}\\\hline\end{tabular}%
+%\addtolength{\linewidth}{\leftmargin}%
+}
+
+\newif\if@legenda
+\@legendafalse
+\def\@legendasymbolen{}
+\newcommand{\kantlijnsymbool}[3]{%
+\expandafter\newcommand\csname @@#1\endcsname{#2}%
+%
+\expandafter\newcommand\csname @#1\endcsname{%
+  \csname @@#1\endcsname
+  \protected@write\@auxout{}%
+    {\string\ifx
+     \expandafter\string\csname @#1gebruikt\endcsname
+     \string\undefined
+     \string\else
+     \expandafter\string\csname @#1gebruikt\endcsname
+     \string\fi
+    }}%
+%
+\expandafter\newcommand\csname #1\endcsname{\protect\csname @#1\endcsname}%
+%
+\expandafter\newcommand\csname @#1gebruikt\endcsname{\global\@legendatrue\global\csname @legenda#1true\endcsname}%
+%
+\expandafter\newcommand\csname @#1uitleg\endcsname{#3}%
+%
+\expandafter\newcommand\csname #1uitleg\endcsname[1]{\expandafter\renewcommand\csname @#1uitleg\endcsname{##1}}
+%
+\expandafter\newif\csname if@legenda#1\endcsname%
+\csname legenda#1false\endcsname%
+%
+\expandafter\newcommand\csname @#1legenda\endcsname{\csname if@legenda#1\endcsname\mbox{}\kantlijn{\csname @@#1\endcsname} \csname @#1uitleg\endcsname\fi}%
+%
+% Dit breidt \@legendasymbolen uit met de 'if' voor het nieuwe symbool:
+\toks0=\expandafter{\@legendasymbolen \par\csname @#1legenda\endcsname}%
+\long\edef\@legendasymbolen{\the\toks0}%
+}
+
+% Een aantal symbolen die we gebruiken bij opgaven
+\kantlijnsymbool{schaar}{\ding{36}}{staat voor een praktische opdracht.}
+\kantlijnsymbool{vinger}{\ding{43}}{betekent dat er achterin een hint bij deze opgave is te vinden.}
+\kantlijnsymbool{ster}{\ding{72}}{staat voor een extra moeilijke opgave.}
+\kantlijnsymbool{gr}{\includegraphics[height=0.6\baselineskip]{gr_icon}\hspace{0.1\baselineskip}}{staat voor een opgave waarbij een grafische rekenmachine nodig is.}
+\kantlijnsymbool{discussie}{\includegraphics[width=0.5cm]{discussie}}{staat voor een discussievraag.}
+
+% Een commando om een symbool LINKS van de tekst in de kantlijn te zetten.
+\newcommand{\kantlijn}[1]{\hspace{-\lastskip}%
+\vadjust{\vspace{-1mm}\smash{\llap{#1\hspace{3mm}}}\vspace{1mm}}}
+
+% Het environment voor opgaven
+
+\newcounter{opgaveteller}
+\newcounter{subopgaveteller}
+\@addtoreset{subopgaveteller}{opgaveteller}
+
+% Nummer opgaven per chapter, of nummer ze los.
+\if@plattenummering
+  \newcommand{\opgavelabel}{\arabic{opgaveteller}}
+  \newcommand{\subopgavelabel}{\arabic{opgaveteller}\alph{subopgaveteller}}
+\else
+  \@addtoreset{opgaveteller}{chapter}
+  \newcommand{\opgavelabel}{\thechapter.\arabic{opgaveteller}}
+  \newcommand{\subopgavelabel}{\thechapter.\arabic{opgaveteller}%
+                               \alph{subopgaveteller}}
+\fi
+
+\newif\if@opgaveantwoordruimte
+\newif\if@opgavekantlijn
+
+\newif\if@binnensubopgaven
+\@binnensubopgavenfalse
+
+\newcommand{\@opgaveantwoordruimte}{}
+\newcommand{\@opgavekantlijn}{}
+\ifx\@vastekantlijn\undefined\newcommand{\@vastekantlijn}{}\fi
+
+\def\@opgavearg#1{%
+ \ifx,#1,\else
+  \ifcat_\ifnum0<0#1 _\else X\fi % is #1 een getal?
+   \if@opgaveantwoordruimte
+    \errhelp{Zie de README bij de vierkant latex files voor meer informatie}
+    \errmessage{Je kan slechts 1 getal als parameter voor het aantal lijntjes aan een opgave meegeven.}
+   \else
+    \if@opgaveantwoordlijnen
+     \renewcommand{\@opgaveantwoordruimte}{\nobreak\lijnregels{#1}\par}
+    \else
+     \renewcommand{\@opgaveantwoordruimte}{\nobreak\antwoordvlak{#1}\par}
+    \fi
+    \@opgaveantwoordruimtetrue
+   \fi
+  \else
+   \if@opgavekantlijn
+    \errhelp{Zie de README bij de vierkant-latex-files voor meer informatie}
+    \errmessage{Je kan slechts een parameter met symbolen voor in de kantlijn aan een opgave meegeven.}
+   \else
+    \renewcommand{\@opgavekantlijn}{#1}
+    \@opgavekantlijntrue
+   \fi
+  \fi
+ \fi
+}
+
+
+\def\@opgaveparsecomma#1,#2.{\@opgavearg{#1}\ifx:#2\else\@opgaveparsecomma#2.\fi}
+
+\def\@opgaveargparse#1{\@opgaveparsecomma#1,:.}
+
+
+\newlength{\@opgaveindent}
+\newlength{\@subopgaveindent}
+\setlength{\@opgaveindent}{30pt}%
+\setlength{\@subopgaveindent}{21pt}%
+\if@plattenummering
+  \addtolength{\@opgaveindent}{-9pt}%
+\fi
+
+% Er zijn twee varianten van het opgave-environment: ingesprongen en niet.
+
+
+\if@opgaveninspringen
+  %
+  % De reguliere ingesprongen variant
+  %
+  %
+  % We gebruiken een kloon van enumitem's description environment.
+  % Disable de meeste verticale spacing.
+  \newlist{@opgavelist}{description}{2}
+  \setlist[@opgavelist]{style=sameline,%
+                        partopsep=\z@skip,topsep=\z@skip,itemsep=\z@skip}
+  \setlist[@opgavelist,1]{leftmargin=\@opgaveindent}
+  \setlist[@opgavelist,2]{leftmargin=\@subopgaveindent}
+
+  \newlength{\@opgavekantlijnwidth}
+
+  \def\@opgavenaam(#1){({#1}) }
+
+  \newenvironment{opgave}[1][]{%
+    \renewcommand{\@currentlabel}{\opgavelabel}%
+    \renewcommand{\@opgaveantwoordruimte}{}%
+    \renewcommand{\@opgavekantlijn}{}%
+    \@opgavekantlijnfalse
+    \@opgaveantwoordruimtefalse
+    \@opgaveargparse{#1}%
+    \stepcounter{opgaveteller}%
+    \begingroup
+    % Het item van deze description wordt ingesprongen.
+    % Het label van de opgave wordt als label in de ingesprongen ruimte gezet.
+    % De kantlijn-symbolen worden daar weer voor gezet.
+    \setbox\z@\hbox{\@opgavekantlijn\@vastekantlijn}%
+    \setlength{\@opgavekantlijnwidth}{\wd\z@}%
+    \begin{@opgavelist}%
+    \item[\llap{\box\z@\hskip3mm}%
+          \rlap{\opgavelabel}]%
+    % Deze constructie zorgt ervoor dat je met \begin{opgave}(Naam)
+    % 'Naam' tussen haakjes achter de opgave kunt zetten.
+    \@ifnextchar ({\@opgavenaam}%
+
+    % Hierboven wordt de breedte van de kantlijnsymbolen voor deze opgave in
+    % \@opgavekantlijnwidth gezet. Deze length wordt gebruikt om te voorkomen
+    % dat kantlijnsymbolen overlappen als er direct een subopgave op dezelfde
+    % regel gestart wordt. We moeten deze length terug op 0 zetten voor wanneer
+    % er een subopgave later pas begint. Daarvoor herdefinieren we \par.
+    \expandafter\def\expandafter\par\expandafter%
+                    {\par\setlength{\@opgavekantlijnwidth}{\z@}}%
+    \ignorespaces
+  }
+  {%
+    \end{@opgavelist}\endgroup
+  }
+
+  % Het subopgave-environment bestaat alleen in de ingesprongen variant.
+  % Een subopgave staat binnen een opgave, en wordt extra ingesprongen.
+  \newenvironment{subopgave}[1][]{%
+    \renewcommand{\@currentlabel}{\subopgavelabel}%
+    \renewcommand{\@opgaveantwoordruimte}{}%
+    \renewcommand{\@opgavekantlijn}{}%
+    \@opgavekantlijnfalse
+    \@opgaveantwoordruimtefalse
+    \@opgaveargparse{#1}%
+    \stepcounter{subopgaveteller}%
+    \begingroup
+    % Aantekening: om de ruimte boven de subopgave weg te halen, indien gewenst:
+    %\setlength{\parskip}{\z@}%
+    % Het item van deze description wordt ingesprongen.
+    % Het label van de opgave wordt als label in de ingesprongen ruimte gezet.
+    \begin{@opgavelist}%
+    % Met \@opgavekantlijnwidth wordt overlap met de symbolen van de
+    % (super)opgave voorkomen. Zie het commentaar in opgave voor details.
+    \item[\llap{\@opgavekantlijn\hskip\@opgavekantlijnwidth%
+                \hskip3mm\hskip\@opgaveindent}%
+          \rlap{(\hbox to0.52em{\hss\alph{subopgaveteller}\hss})}]%
+    \global\setlength{\@opgavekantlijnwidth}{\z@}
+    % deze constructie zorgt ervoor dat je met \begin{opgave}(Naam)
+    % 'Naam' tussen haakjes achter de opgave kunt zetten.
+    \@ifnextchar ({\@opgavenaam}%
+    \ignorespaces
+  }
+  {%
+    \end{@opgavelist}\endgroup
+  }
+
+  % Ook handmatig ingevoegde antwoordruimte uitzetten
+  \renewcommand{\lijnregels}[1]{}
+  \renewcommand{\antwoordvlak}[1]{}
+\else
+  %
+  % De niet-ingesprongen variant
+  %
+  \def\@opgavenaam(#1){\ ({#1})
+                       \parskip=0pt\par\nobreak
+                       \everypar={\setlength{\parskip}{\baselineskip}}}
+
+  \newenvironment{opgave}[1][]{%
+    \renewcommand{\@currentlabel}{\opgavelabel}%
+    \renewcommand{\@opgaveantwoordruimte}{}%
+    \renewcommand{\@opgavekantlijn}{\mbox{\@vastekantlijn}}%
+    \@opgavekantlijnfalse
+    \@opgaveantwoordruimtefalse
+    \@opgaveargparse{#1}%
+    \if@binnensubopgaven
+      \stepcounter{subopgaveteller}%
+    \else
+      \stepcounter{opgaveteller}%
+    \fi
+    \par\makebox[0mm][r]{\@opgavekantlijn\hspace{3mm}}%
+    \begingroup\noindent
+    \rmfamily\upshape\textbf{Opgave\ \opgavelabel}%
+    % deze constructie zorgt ervoor dat je met \begin{opgave}(Naam)
+    % 'Naam' tussen haakjes achter de opgave kunt zetten, voor de newline.
+    \@ifnextchar ({\@opgavenaam}%
+    % (GvdH) De manipulaties met \parskip hebben als effect dat er geen
+    % ruimte zit tussen de Opgave header en diens 1e paragraaf, maar dat er
+    % wel een witregel zit voor iedere eventuele volgende paragraaf binnen
+    % de opgave environment
+    {\parskip=0pt\par\nobreak\everypar={\setlength{\parskip}{\baselineskip}}}%
+  }
+  {%
+    \endgroup\par\@opgaveantwoordruimte
+  }
+
+  % Het subopgaven-environment bestaat alleen in de niet-ingesprongen mode,
+  % en groepeert een blok opgaven: ze krijgen hetzelfde nummer, met een suffix
+  % a, b, c, ...
+  \newenvironment{subopgaven}[0]{%
+    \if@binnensubopgaven
+      \errhelp{Zie de README bij de vierkant-latex-files voor meer informatie.}
+      \errmessage{Het is niet mogelijk subopgaven binnen subopgaven te maken.}
+    \fi
+    \stepcounter{opgaveteller}%
+    \@binnensubopgaventrue
+    \newcommand{\subopgavelabel}{\hskip\@subopgaveindent
+                                 \rlap{(\alph{subopgaveteller})}}%
+
+    % Merk op dat de scope van deze \renewcommands binnen dit environment is;
+    % na de \end{subopgaven} wordt hij vanzelf weer gerevert.
+    \if@plattenummering
+      \newcommand{\eerstesubopgavelabel}{\rlap{\arabic{opgaveteller}}%
+                                         \hskip\@subopgaveindent
+                                         (\alph{subopgaveteller})}%
+      \renewcommand{\opgavelabel}{\arabic{opgaveteller}\alph{subopgaveteller}}%
+    \else
+      \newcommand{\eerstesubopgavelabel}%
+                 {\rlap{\thechapter.\arabic{opgaveteller}}%
+                  \hskip\@subopgaveindent(\alph{subopgaveteller})}%
+      \renewcommand{\opgavelabel}%
+                   {\thechapter.\arabic{opgaveteller}\alph{subopgaveteller}}%
+    \fi
+  }{%
+    \@binnensubopgavenfalse
+  }
+\fi
+
+
+
+% \begin{hint} ... \end{hint} voor hints bij opgaven
+\Newassociation{hint}{Hint}{hintfile}
+\newcommand{\starthints}{\Opensolutionfile{hintfile}[vk_hints]}
+\newcommand{\prehint}{\global\@hintsgebruikttrue}
+
+% \begin{antwoord} ... \end{antwoord} voor antwoorden bij opgaven
+\Newassociation{antwoord}{Antwoord}{antwoordfile}
+\newcommand{\startantwoorden}{\Opensolutionfile{antwoordfile}[vk_antwoorden]}
+\newcommand{\preantwoord}{\global\@antwoordengebruikttrue}
+
+% 'Hint' is het environment voor in het 'hints' hoofdstuk
+% 'Antwoord' is het environment voor in het 'antwoorden' hoofdstuk
+\if@opgaveninspringen
+  % Als de opgaven ingesprongen zijn, zetten we het opgavenummer in de kantlijn.
+  \renewcommand{\Hintlabel}[1]{\textbf{#1}}
+  \renewcommand{\Antwoordlabel}[1]{\textbf{#1}}
+  \renewenvironment{Hint}[1]{%
+  \begingroup\par\makebox[0mm][r]{\rmfamily\upshape\Hintlabel{#1}\hskip3mm}%
+  \ignorespaces
+  }{\endgroup\par}
+  \renewenvironment{Antwoord}[1]{%
+  \begingroup\par\makebox[0mm][r]{\rmfamily\upshape\Antwoordlabel{#1}\hskip3mm}%
+  \ignorespaces
+  }{\endgroup\par}
+\else
+  % Als de opgaven niet ingesprongen zijn, zetten we "Opgave #"
+  % op een aparte regel.
+  \renewcommand{\Hintlabel}[1]{\textbf{Opgave #1}}
+  \renewcommand{\Antwoordlabel}[1]{\textbf{Opgave #1}}
+  \renewenvironment{Hint}[1]{%
+  \begingroup\rmfamily\upshape\Hintlabel{#1}\\%
+  }{\endgroup\par}
+  \renewenvironment{Antwoord}[1]{%
+  \begingroup\rmfamily\upshape\Antwoordlabel{#1}\\%
+  }{\endgroup\par}
+\fi
+
+\@ifundefined{c@chapter}%
+{%
+  \newcommand{\toonhints}[1][Hints bij de opgaven]{%
+    \Closesolutionfile{hintfile}
+    \section{#1}
+    \input{vk_hints}
+  }%
+  \newcommand{\toonantwoorden}[1][Antwoorden]{%
+    \Closesolutionfile{antwoordfile}
+    \section{#1}
+    \input{vk_antwoorden}
+  }%
+}{%
+  \newcommand{\toonhints}[1][Hints bij de opgaven]{%
+    \Closesolutionfile{hintfile}
+    \chapter*{#1}
+    \addcontentsline{toc}{chapter}{Hints bij de opgaven}
+    \input{vk_hints}
+  }%
+  \newcommand{\toonantwoorden}[1][Antwoorden]{%
+    \Closesolutionfile{antwoordfile}
+    \if@antwoorden{
+      \chapter*{#1}
+      \addcontentsline{toc}{chapter}{Antwoorden}
+      \input{vk_antwoorden}
+    }\else{
+    }\fi
+  }%
+}
+
+\newcommand{\hintsantwoorden}{%
+  \if@hintsgebruikt{%
+    \toonhints
+  }\fi
+  \if@antwoordengebruikt{%
+    \toonantwoorden
+  }\fi
+}
+
+% alinea instellingen
+\setlength{\parskip}{\baselineskip}
+\setlength{\parindent}{0pt}
