@@ -1,7 +1,7 @@
-== Gestrand ==
+## Gestrand
 Door: Andere Bob, Eva, Ida
 
-=== Dag 1: Knal! Gestrand. ===
+### Dag 1: Knal! Gestrand.
 Hoe heeft dit kunnen gebeuren? We hadden al onze hoop gelegd op het
 sterrenbeeld Cweid, en het heeft ons al ver gebracht, maar niet naar onze
 bestemming.  Het is nu niet belangrijk waar we naartoe gingen, het enige dat we
@@ -19,7 +19,7 @@ is hier, en eigenlijk heb ik geen flauw idee waarom. Maar nu zutten we
 opgescheept met elkaar, hoewel we geen schip meer hebben. Het was laat, en het
 enige dat we nog konen doen is slapen: slapen op het strand.
 
-=== Dag 2 ===
+### Dag 2
 Het was een koude nacht. 's Ochtends werd ik wakker gemaakt. Het verbaasde me
 niet dat het $\inf$ was. Ze was weer druk bezig met druk zijn en er leek geen
 eind aan te komen. Ik stond op, mijn rug is stijf van het harde zand. Om me
@@ -36,7 +36,7 @@ rekenen. Na veel gezwoeg vonden we water en haalden we de rest erbij. OP een
 open plek in het gras naast het beekje gingen we slapen, want het was laat. Ik
 staarde naar de donkere hemel en zag Cweid spottend naar me schijnen.
 
-=== Dag 3 ===
+### Dag 3
 Verrassend genoeg werd ik laat in de middag wakker. Hierdoor begin ik me zorgen
 te maken. Normaal zou $\inf$ me al veel eerder wakker maken.
 
@@ -69,7 +69,7 @@ hele eiland verkend, maar was niks bijzonders tegengekomen. Goed gevuld
 begonnen we te slapen op onze open plek. Ik probeerde niet naar de sterrenhemel
 te kijken.
 
-=== Dag 4 ===
+### Dag 4
 Eindelijk werd ik om een normale tijd wakker, maar weer niet door $\inf$.
 Blijkbaar wilde hij ons nog echt bedanken voor gisteren, door ons niet te
 wekken. Maar ik hoorde geschreeuw. Het was $1$! Hij snelde op ons af. Ik had

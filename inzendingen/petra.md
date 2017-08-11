@@ -1,4 +1,4 @@
-== Bootje ==
+## Bootje
 Door Petra
 
 Deze boot is afkomstig uit Noorwegen, uit het dorpje Wakkerdam in de provincie
